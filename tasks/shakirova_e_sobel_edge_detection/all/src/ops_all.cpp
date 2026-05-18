@@ -97,8 +97,8 @@ bool ShakirovaESobelEdgeDetectionALL::RunImpl() {
   std::vector<int> local_buf(static_cast<size_t>(local_buf_rows) * static_cast<size_t>(w), 0);
 
   const int *inp_ptr = (rank == 0) ? GetInput().pixels.data() : nullptr;
-  MPI_Scatterv(inp_ptr, send_counts.data(), send_displs.data(), MPI_INT,
-               local_buf.data(), local_buf_rows * w, MPI_INT, 0, MPI_COMM_WORLD);
+  MPI_Scatterv(inp_ptr, send_counts.data(), send_displs.data(), MPI_INT, local_buf.data(), local_buf_rows * w, MPI_INT,
+               0, MPI_COMM_WORLD);
 
   std::vector<int> local_out(static_cast<size_t>(local_inner) * static_cast<size_t>(w), 0);
 
@@ -116,22 +116,20 @@ bool ShakirovaESobelEdgeDetectionALL::RunImpl() {
         const int row_end = (tid == num_stl - 1) ? local_inner : row_begin + chunk;
 
         for (int row = row_begin; row < row_end; ++row) {
-          const int *prev = lb + static_cast<ptrdiff_t>((row) * w);
+          const int *prev = lb + static_cast<ptrdiff_t>((row)*w);
           const int *curr = lb + static_cast<ptrdiff_t>((row + 1) * w);
           const int *next = lb + static_cast<ptrdiff_t>((row + 2) * w);
-          int *out_row    = lo + static_cast<ptrdiff_t>(row * w);
+          int *out_row = lo + static_cast<ptrdiff_t>(row * w);
 
           for (int col = 1; col < w - 1; ++col) {
-            const int gx = -prev[col - 1] + prev[col + 1]
-                           - (2 * curr[col - 1]) + (2 * curr[col + 1])
-                           - next[col - 1] + next[col + 1];
-            const int gy = -prev[col - 1] - (2 * prev[col]) - prev[col + 1]
-                           + next[col - 1] + (2 * next[col]) + next[col + 1];
+            const int gx = -prev[col - 1] + prev[col + 1] - (2 * curr[col - 1]) + (2 * curr[col + 1]) - next[col - 1] +
+                           next[col + 1];
+            const int gy =
+                -prev[col - 1] - (2 * prev[col]) - prev[col + 1] + next[col - 1] + (2 * next[col]) + next[col + 1];
 
             const int agx = std::abs(gx);
             const int agy = std::abs(gy);
-            const int magnitude =
-                (((std::max(agx, agy) * 123) + (std::min(agx, agy) * 51)) >> 7);
+            const int magnitude = (((std::max(agx, agy) * 123) + (std::min(agx, agy) * 51)) >> 7);
             out_row[col] = magnitude > 255 ? 255 : magnitude;
           }
         }
@@ -150,12 +148,10 @@ bool ShakirovaESobelEdgeDetectionALL::RunImpl() {
     recv_displs[i] = (row_offsets[i] + 1) * w;
   }
 
-  MPI_Gatherv(local_out.data(), local_inner * w, MPI_INT,
-              GetOutput().data(), recv_counts.data(), recv_displs.data(), MPI_INT,
-              0, MPI_COMM_WORLD);
+  MPI_Gatherv(local_out.data(), local_inner * w, MPI_INT, GetOutput().data(), recv_counts.data(), recv_displs.data(),
+              MPI_INT, 0, MPI_COMM_WORLD);
 
-  MPI_Bcast(GetOutput().data(), static_cast<int>(GetOutput().size()), MPI_INT,
-            0, MPI_COMM_WORLD);
+  MPI_Bcast(GetOutput().data(), static_cast<int>(GetOutput().size()), MPI_INT, 0, MPI_COMM_WORLD);
 
   return true;
 }
@@ -164,4 +160,4 @@ bool ShakirovaESobelEdgeDetectionALL::PostProcessingImpl() {
   return true;
 }
 
-}  // namespace shakirova_e_sobel_edge_detection 
+}  // namespace shakirova_e_sobel_edge_detection
