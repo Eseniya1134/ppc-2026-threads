@@ -79,4 +79,4 @@ INSTANTIATE_TEST_SUITE_P(RunModeTests, ShakirovaESobelEdgeDetectionPerfTestThrea
 
 }  // namespace
 
-}  // namespace shakirova_e_sobel_edge_detection 
+}  // namespace shakirova_e_sobel_edge_detection
