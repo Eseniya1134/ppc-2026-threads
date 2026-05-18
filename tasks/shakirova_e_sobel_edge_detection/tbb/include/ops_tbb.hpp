@@ -19,4 +19,4 @@ class ShakirovaESobelEdgeDetectionTBB : public BaseTask {
   bool PostProcessingImpl() override;
 };
 
-}  // namespace shakirova_e_sobel_edge_detection
+}  // namespace shakirova_e_sobel_edge_detection 
