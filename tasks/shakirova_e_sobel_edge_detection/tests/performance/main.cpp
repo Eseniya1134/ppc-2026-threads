@@ -66,7 +66,9 @@ TEST_P(ShakirovaESobelEdgeDetectionPerfTestThreads, RunPerfModes) {
 namespace {
 
 const auto kAllPerfTasks =
-    ppc::util::MakeAllPerfTasks<InType, ShakirovaESobelEdgeDetectionSEQ, ShakirovaESobelEdgeDetectionOMP,ShakirovaESobelEdgeDetectionSTL,ShakirovaESobelEdgeDetectionALL>(PPC_SETTINGS_shakirova_e_sobel_edge_detection);
+    ppc::util::MakeAllPerfTasks<InType, ShakirovaESobelEdgeDetectionSEQ, ShakirovaESobelEdgeDetectionOMP,
+                                ShakirovaESobelEdgeDetectionSTL, ShakirovaESobelEdgeDetectionALL>(
+        PPC_SETTINGS_shakirova_e_sobel_edge_detection);
 
 const auto kGtestValues = ppc::util::TupleToGTestValues(kAllPerfTasks);
 
